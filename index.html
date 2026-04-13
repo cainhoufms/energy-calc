@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyCalc - Controle de Energia</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Framework moderno: Alpine.js -->
+  <script src="//unpkg.com/alpinejs" defer></script>
+</head>
+<body>
+  <header>
+    <h1>EnergyCalc</h1>
+    <p>Monitore o consumo de energia da sua casa</p>
+  </header>
+
+  <main x-data="calculadoraEnergia()">
+    <section class="calculadora">
+      <h2>Calcular Conta de Luz</h2>
+      <form @submit.prevent="calcular()">
+        <label for="kwh">Consumo do mês em kWh:</label>
+        <input
+          type="number"
+          id="kwh"
+          x-model="kwh"
+          placeholder="Ex: 150"
+          aria-label="Digite o consumo em kWh"
+          required>
+
+        <label for="tarifa">Tarifa da sua cidade R$/kWh:</label>
+        <input
+          type="number"
+          id="tarifa"
+          step="0.01"
+          x-model="tarifa"
+          aria-label="Digite a tarifa por kWh"
+          required>
+
+        <button type="submit">Calcular Valor</button>
+      </form>
+    </section>
+
+    <section class="resultado" x-show="resultado.total" x-transition aria-live="polite">
+      <h2>Resultado</h2>
+      <p><strong>Valor Estimado:</strong> R$ <span x-text="resultado.total"></span></p>
+      <p><strong>Consumo:</strong> <span x-text="kwh"></span> kWh</p>
+      <p class="status" :class="resultado.classe" x-text="resultado.status"></p>
+    </section>
+
+    <section class="dicas">
+      <h2>Dicas para Economizar Energia</h2>
+      <ul>
+        <li>Substitua lâmpadas incandescentes por LED</li>
+        <li>Retire eletrônicos da tomada quando não estiver usando</li>
+        <li>Use a máquina de lavar com capacidade máxima</li>
+        <li>Evite abrir a geladeira várias vezes</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>Projeto Módulo 02 - Solução para dificuldade em gerenciar consumo de energia elétrica</p>
+  </footer>
+
+  <script>
+    function calculadoraEnergia() {
+      return {
+        kwh: '',
+        tarifa: 0.85,
+        resultado: { total: null, status: '', classe: '' },
+
+        calcular() {
+          const consumo = Number(this.kwh);
+          const valorKwh = Number(this.tarifa);
+          const total = consumo * valorKwh;
+
+          if (total > 200) {
+            this.resultado.status = 'Consumo Alto - Atenção aos seus hábitos';
+            this.resultado.classe = 'alto';
+          } else if (total < 80) {
+            this.resultado.status = 'Consumo Econômico - Parabéns!';
+            this.resultado.classe = 'baixo';
+          } else {
+            this.resultado.status = 'Consumo Normal';
+            this.resultado.classe = 'normal';
+          }
+
+          this.resultado.total = total.toFixed(2);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
